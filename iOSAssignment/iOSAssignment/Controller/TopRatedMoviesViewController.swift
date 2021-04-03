@@ -8,9 +8,15 @@
 
 import UIKit
 
-class TopRatedMoviesViewController:UIViewController, UITableViewDelegate,UITableViewDataSource {
-
+class TopRatedMoviesViewController:UIViewController{
+    //--------------------------------------------------
+    // MarK : Story board variables
+    //--------------------------------------------------
     @IBOutlet weak var topRatedTV: UITableView!
+    
+    //--------------------------------------------------
+    // MarK : Custom variables
+    //--------------------------------------------------
     var dataResponse : InformationModel!
     var selectedResult:Results?
     private var viewModel =  InformationViewModel()
@@ -22,7 +28,9 @@ class TopRatedMoviesViewController:UIViewController, UITableViewDelegate,UITable
         self.topRatedTV.register(UINib(nibName: "TableViewCell", bundle: nil), forCellReuseIdentifier: "TableViewCell")
         // Do any additional setup after loading the view.
     }
-    
+    //--------------------------------------------------
+    // MarK : setupViewModel
+    //--------------------------------------------------
     
     private func setupViewModel() {
         self.showLoader()
@@ -38,37 +46,7 @@ class TopRatedMoviesViewController:UIViewController, UITableViewDelegate,UITable
         }
         
     }
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if (dataResponse?.results?.count ?? 0) > 0
-        {
-            return dataResponse.results?.count ?? 0
-        }
-        else
-        {
-            return 0
-            
-        }
-    }
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = topRatedTV.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath as IndexPath) as! TableViewCell
-        cell.movieTitle.text = dataResponse.results?[indexPath.row].title
-        cell.selectionStyle = .none
-        let imgURL = "https://image.tmdb.org/t/p/original/\(String(describing: (dataResponse.results?[indexPath.row].poster_path!)!))"
-        print(imgURL)
-        print(cell.movieTitle.text)
-        ImageLoader().imageLoad(imgView: cell.movieImg, url: imgURL )
-       // cell.delegate = self
-        return cell
-    }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.selectedResult = dataResponse.results?[indexPath.row]
-        performSegue(withIdentifier: "detailsSegue", sender: nil)
-    }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-         return self.view.frame.height/8
-        
-    }
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let vc = segue.destination as! MovieDetailsViewController
         vc.selectedResult = self.selectedResult
@@ -84,4 +62,44 @@ class TopRatedMoviesViewController:UIViewController, UITableViewDelegate,UITable
     }
     */
 
+}
+//--------------------------------------------------
+// MarK : UITableViewDelegate, UITableViewDataSource methods
+//--------------------------------------------------
+extension TopRatedMoviesViewController: UITableViewDelegate,UITableViewDataSource {
+ 
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if (dataResponse?.results?.count ?? 0) > 0
+        {
+            return dataResponse.results?.count ?? 0
+        }
+        else
+        {
+            return 0
+            
+        }
+    }
+  
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = topRatedTV.dequeueReusableCell(withIdentifier: "TableViewCell", for: indexPath as IndexPath) as! TableViewCell
+        cell.movieTitle.text = dataResponse.results?[indexPath.row].title
+        cell.selectionStyle = .none
+        let imgURL = "https://image.tmdb.org/t/p/original/\(String(describing: (dataResponse.results?[indexPath.row].poster_path!)!))"
+        print(imgURL)
+        print(cell.movieTitle.text)
+        ImageLoader().imageLoad(imgView: cell.movieImg, url: imgURL )
+       // cell.delegate = self
+        return cell
+    }
+  
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.selectedResult = dataResponse.results?[indexPath.row]
+        performSegue(withIdentifier: "detailsSegue", sender: nil)
+    }
+    
+   
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+         return self.view.frame.height/8
+        
+    }
 }
